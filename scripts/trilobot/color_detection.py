@@ -2,7 +2,7 @@
 # The object has to be detected within an specific distance in order to make the robot start running the color detection.
 # If the object in front of the robot has a known color, then the LEDs are turned on using the same color, otherwise they are turned off.
 
-import picamera
+from picamera2 import Picamera2
 import cv2
 import numpy
 from trilobot import *
@@ -30,16 +30,15 @@ def distance_detection():
    
     return distance
 
+# Start the camera once; "RGB888" gives pixels in BGR byte order, which is what OpenCV expects
+camera = Picamera2()
+camera.configure(camera.create_still_configuration(main={"size": (320, 240), "format": "RGB888"}))
+camera.start()
+
 def capture_image():
     """Captures a single still image from the Trilobot's camera and returns it as
     a BGR numpy array (the format OpenCV expects)."""
-    with picamera.PiCamera() as camera:
-        camera.resolution = (320, 240)
-        image = numpy.empty((240 * 320 * 3,), dtype=numpy.uint8)
-        camera.capture(image, 'bgr')
-        image = image.reshape((240, 320, 3))
-        
-    return image
+    return camera.capture_array()
   
 def check_color(mask,h,w):
     """Checks whether a given colour mask has any pixels switched on within a

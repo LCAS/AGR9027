@@ -1,10 +1,8 @@
 # AGR9027 Trilobot simulators
 
-These simulators let you develop and test your Assessment 2 code **on your own
-laptop**, without needing the real Trilobot or access to the University lab. There is
-**one simulator per task** (A, B, C) because each task needs a different test scenario,
+These simulators let you develop and test your Assessment 2 code **on your own laptop**, without needing the real Trilobot or access to the University lab. There is **one simulator per task** (A, B, C) because each task needs a different test scenario,
 plus a live-webcam vision harness.
-You don't need any robotics/Raspberry Pi hardware or the `trilobot`/`picamera` Python
+You don't need any robotics/Raspberry Pi hardware or the `trilobot`/`picamera2` Python
 packages to run these - only a normal laptop with Python installed.
 
 > **Important:** the simulators are simplified, 2D approximations meant to help you
@@ -227,7 +225,7 @@ This means the control logic you write and test in the simulator (the code insid
 * Replace `tbot = SimTrilobot(...)` with `tbot = Trilobot()` (from `from trilobot import
   Trilobot`).
 * Replace `tbot.get_camera_image()` with a real camera capture (see
-  `scripts/trilobot/color_detection.py` for the `picamera` capture pattern).
+  `scripts/trilobot/color_detection.py` for the `picamera2` capture pattern).
 * Remove the pygame window code (only needed for the simulator's visualisation).
 
 ## Limitations to keep in mind

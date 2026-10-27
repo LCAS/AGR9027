@@ -194,7 +194,7 @@ class SimTrilobot:
     def get_camera_image(self):
         """Simulated camera: returns a BGR numpy image with the obstacles drawn as
         red blobs, similar to what scripts/trilobot/ball_tracking.py or
-        scripts/trilobot/color_detection.py expect from `picamera`."""
+        scripts/trilobot/color_detection.py expect from `picamera2`."""
         w, h = CAMERA_SIZE
         image = np.zeros((h, w, 3), dtype=np.uint8)
         half_fov = math.radians(CAMERA_FOV_DEG / 2)
