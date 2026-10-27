@@ -5,7 +5,7 @@
 # the size/shape filtering, how the count is displayed or used) to solve your own task.
 # The count is printed on the console and shown as a simple live window.
 
-import picamera
+from picamera2 import Picamera2
 import cv2
 import numpy
 from trilobot import *
@@ -20,16 +20,15 @@ color_wanted = "RED"
 MIN_AREA = 80
 
 
+# Start the camera once; "RGB888" gives pixels in BGR byte order, which is what OpenCV expects
+camera = Picamera2()
+camera.configure(camera.create_still_configuration(main={"size": (320, 240), "format": "RGB888"}))
+camera.start()
+
 def capture_image():
     """Captures a single still image from the Trilobot's camera and returns it as
     a BGR numpy array (the format OpenCV expects)."""
-    with picamera.PiCamera() as camera:
-        camera.resolution = (320, 240)
-        image = numpy.empty((240 * 320 * 3,), dtype=numpy.uint8)
-        camera.capture(image, 'bgr')
-        image = image.reshape((240, 320, 3))
-
-    return image
+    return camera.capture_array()
 
 
 def color_mask(image, color_wanted):

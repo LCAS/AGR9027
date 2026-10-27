@@ -7,7 +7,7 @@
 # After detecting the circle/ball, the robot performs the corresponding action only once, in order to repeat the action, the circle/ball must 
 # be removed from the camera view to reset the robot's operation.
 
-import picamera
+from picamera2 import Picamera2
 import cv2
 import numpy
 import time
@@ -27,19 +27,18 @@ BLACK = (0, 0, 0)
 action_completed=False # initial condition
 robot_action= "NO ACTION" # initial condition
 
+# Start the camera once; "RGB888" gives pixels in BGR byte order, which is what OpenCV expects
+camera = Picamera2()
+camera.configure(camera.create_still_configuration(main={"size": (320, 240), "format": "RGB888"}))
+camera.start()
+
 def capture_image():
     """Captures a single still image from the Trilobot's camera and returns it as
     a BGR numpy array, together with the image width (used later to work out how
     far a circle is from the centre of the image)."""
-    with picamera.PiCamera() as camera:
-        camera.resolution = (320, 240)
-        image = numpy.empty((240 * 320 * 3,), dtype=numpy.uint8)
-        camera.capture(image, 'bgr')
-        image = image.reshape((240, 320, 3))
-        #image = cv2.imdecode(numpy.fromfile('/home/pi/trilobot-examples/images/red_circle.PNG', dtype=numpy.uint8), cv2.IMREAD_UNCHANGED)
-        
-        h, w, d = image.shape
-        
+    image = camera.capture_array()
+    h, w, d = image.shape
+
     return image,w
   
 def circle_detection(image):

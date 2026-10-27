@@ -16,6 +16,8 @@ starting point for your own work.
 AGR9027/
   sample_images/           <- Sample images for offline image-processing practice
   scripts/
+    basic_python_1/         <- Jupyter notebook examples for introductory Python class 1
+    basic_python_2/         <- Jupyter notebook examples for introductory Python class 2
     trilobot/               <- Example scripts for the real Trilobot robot (hardware)
     computer_vision/        <- Computer vision basics (taught session, coming soon)
     machine_learning/       <- Machine learning basics (taught session, coming soon)
@@ -25,7 +27,15 @@ AGR9027/
 * **[sample_images/](sample_images)** - A collection of sample images (e.g. coloured
   shapes) you can load and process with OpenCV without needing a camera or the robot, you can also print them and show them to the robot/laptop camera, useful for testing/practising image-processing code offline.
 
-* **[scripts/](scripts)** - Example Python scripts, organised into three subfolders:
+* **[scripts/](scripts)** - Python learning materials and example scripts, organised
+  into subfolders:
+  * **[scripts/basic_python_1/](scripts/basic_python_1)** - Jupyter notebook examples
+    for the first introductory Python programming class. Topics include first
+    programs, mathematical operations, variables and data types, and collections
+    such as lists, tuples and dictionaries.
+  * **[scripts/basic_python_2/](scripts/basic_python_2)** - Jupyter notebook examples
+    for the second introductory Python programming class, including comparisons,
+    loops, classification and regression.
   * **[scripts/trilobot/](scripts/trilobot)** - Simple, generic scripts that run on
     the real Trilobot robot (motors, ultrasound sensor, underlighting, camera). See
     its own [README](scripts/trilobot/README.md) for a full description of every
@@ -61,10 +71,61 @@ practice tools only.
 
 ## Connecting to the real Trilobot (laboratory PCs)
 
-> **Placeholder - to be completed.**
->
-> This section will explain how to connect to and run code on the real Trilobot robot
-> using the PCs in the University laboratory (e.g. network/Wi-Fi setup, SSH/remote
-> access details, how to transfer your scripts to the robot, and any lab-specific
-> login or booking instructions). Check back here before your first lab session, or
-> ask your module leader if you need this information sooner.
+### 1. Start the robot and find its details
+
+1. Connect the USB-C cable to the power bank. The Raspberry Pi will turn on and
+   automatically connect to the **UoL – Research Wifi** network. Allow about one
+   minute for it to start up and connect.
+2. Find the sticker on the bottom of the robot and note its ID (for example,
+   `TRILO-05`). Use the table below to look up that robot's username, IP address and
+   password. These details may have changed; if they do not work, ask a delivery team
+   member for help.
+
+| Robot ID | Username | IP address | Password |
+| --- | --- | --- | --- |
+| TRILO-11 | `pi11` | `10.247.26.13` | `Name1234` |
+| TRILO-13 | `pi13` | `10.247.26.140` | `Name1234` |
+| TRILO-07 | `pi07` | `10.247.26.16` | `Name1234` |
+| TRILO-06 | `pi06` | `10.247.26.145` | `Name1234` |
+| TRILO-05 | `pi05` | `10.247.26.114` | `Name1234` |
+| TRILO-02 | `pi02` | `10.247.26.141` | `Name1234` |
+| TRILO-12 | `pi12` | `10.247.26.142` | `Name1234` |
+| TRILO-04 | `pi04` | `10.247.26.143` | `Name1234` |
+
+### 2. Sign in to a laboratory PC
+
+1. Turn on the lab PC, select **Windows** as the operating system, and sign in using
+   the password `SEPS`.
+2. Use **WinSCP** to transfer files between the PC and the robot. It is already
+   installed on the lab PCs. In WinSCP's **Login** window, enter the robot's IP
+   address in **Host name**, and enter its username and password from the table above.
+3. After connecting, you can browse the robot's folders and copy files, folders or
+   Python scripts between the PC and the Raspberry Pi.
+
+### 3. Connect and run Python scripts over SSH
+
+1. Open **Visual Studio Code (VS Code)**, which is already installed on the lab PCs,
+   and open a new terminal.
+2. Check that the robot is reachable by running (replace `<ip address>` with the
+   robot's IP address):
+
+   ```text
+   ping <ip address>
+   ```
+
+   If you see replies saying that bytes of data were received, the robot is
+   reachable. If there are no replies, ask a delivery team member for help with the
+   network connection.
+
+3. If the robot is reachable, connect to it with SSH (replace the placeholders with
+   the robot's username and IP address):
+
+   ```text
+   ssh <username>@<ip address>
+   ```
+
+4. The first time you connect, confirm that you trust the remote host. Then enter the
+   robot's password when prompted.
+5. Once connected, you can navigate the Raspberry Pi's folders and run Python
+   scripts in the terminal. The scripts run on the robot's Raspberry Pi, not on the
+   lab PC. You can also use WinSCP to browse and transfer files.

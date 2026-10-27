@@ -1,8 +1,7 @@
 # AGR9027 Trilobot example scripts
 
 This folder contains example Python scripts for the real Trilobot robot, used for
-Assessment 2. They require the real robot hardware (the `trilobot` and `picamera`
-packages, camera, ultrasound sensor, motors, underlighting) and should be run on the
+Assessment 2. They require the real robot hardware (the `trilobot`, camera, ultrasound sensor, motors, underlighting) and should be run on the
 Raspberry Pi inside the robot - **not** on your own laptop. If you want to develop and
 test code without the real robot, use the [trilobot_simulator/](../../trilobot_simulator)
 folder instead.
