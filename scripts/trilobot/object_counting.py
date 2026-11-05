@@ -6,6 +6,7 @@
 # The count is printed on the console and shown as a simple live window.
 
 from picamera2 import Picamera2
+import os
 import cv2
 import numpy
 from trilobot import *
@@ -18,6 +19,9 @@ color_wanted = "RED"
 
 # Ignore detected blobs smaller than this (in pixels) - helps remove small/noisy specks
 MIN_AREA = 80
+
+# The live window needs a desktop display; over plain SSH (no DISPLAY) only print the count
+SHOW_WINDOW = bool(os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY"))
 
 
 # Start the camera once; "RGB888" gives pixels in BGR byte order, which is what OpenCV expects
@@ -81,12 +85,20 @@ def count_objects(image, color_wanted):
     return count, debug_image
 
 
-while True or KeyboardInterrupt:
-    image = capture_image()
-    count, debug_image = count_objects(image, color_wanted)
-    print("NUMBER OF {} OBJECTS DETECTED: {}".format(color_wanted, count))
+try:
+    while True:
+        image = capture_image()
+        count, debug_image = count_objects(image, color_wanted)
+        print("NUMBER OF {} OBJECTS DETECTED: {}".format(color_wanted, count))
 
-    cv2.putText(debug_image, "Count: {}".format(count), (10, 25),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-    cv2.imshow("Object counting", debug_image)
-    cv2.waitKey(1)
+        if SHOW_WINDOW:
+            cv2.putText(debug_image, "Count: {}".format(count), (10, 25),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+            cv2.imshow("Object counting", debug_image)
+            cv2.waitKey(1)
+except KeyboardInterrupt:
+    pass
+finally:
+    if SHOW_WINDOW:
+        cv2.destroyAllWindows()
+    camera.stop()

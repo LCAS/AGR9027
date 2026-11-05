@@ -63,6 +63,13 @@ def detect_faces():
         blue_light()
     return faces, image
    
-while True or KeyboardInterrupt:
-    faces, image = detect_faces()
-    
+try:
+    while True:
+        faces, image = detect_faces()
+except KeyboardInterrupt:
+    pass
+finally:
+    # Release the camera and GPIO pins so the next run can claim them
+    tbot.fill_underlighting(0,0,0)
+    camera.stop()
+

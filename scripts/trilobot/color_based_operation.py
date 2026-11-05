@@ -76,10 +76,12 @@ def check_color(mask,h,w,x,y,r):
     image moments of the masked region (used to measure how much of that colour
     is present)."""
     
-    search_top = max(int(y - r),0)
-    search_bot = min(int(y + r),h)
-    search_left = max(int(x - r),0)
-    search_right = min(int(x + r),w)
+    # x, y, r are numpy.uint16, so convert to int first to avoid wrap-around when r > x or y
+    x, y, r = int(x), int(y), int(r)
+    search_top = max(y - r,0)
+    search_bot = min(y + r,h)
+    search_left = max(x - r,0)
+    search_right = min(x + r,w)
     mask[0:search_top, 0:w] = 0
     mask[search_bot:h, 0:w] = 0
     mask[0:h, 0:search_left] = 0
@@ -211,27 +213,35 @@ def activate_leds(color):
     elif color=="BLUE":
         tbot.fill_underlighting(BLUE)   
 
-while True or KeyboardInterrupt:
-    [image,width]=capture_image()
-    [num_balls,x_pos,y_pos,radius]=circle_detection(image)
-    if num_balls>0:
-        [ball_color,ball_pos_x]=color_detection(image,x_pos,y_pos,radius)
-        if ball_color!="UNKNOWN":
-            if action_completed==False or robot_action=="TRACKING THE BALL":
-                if action_completed==False:
-                    print("ACTION STARTED") 
-                robot_action=action_planner(ball_color,ball_pos_x,width)            
-                if robot_action!="TRACKING THE BALL":
-                    action_completed=True
-                    print("ACTION COMPLETED")                         
+try:
+    while True:
+        [image,width]=capture_image()
+        [num_balls,x_pos,y_pos,radius]=circle_detection(image)
+        if num_balls>0:
+            [ball_color,ball_pos_x]=color_detection(image,x_pos,y_pos,radius)
+            if ball_color!="UNKNOWN":
+                if action_completed==False or robot_action=="TRACKING THE BALL":
+                    if action_completed==False:
+                        print("ACTION STARTED") 
+                    robot_action=action_planner(ball_color,ball_pos_x,width)            
+                    if robot_action!="TRACKING THE BALL":
+                        action_completed=True
+                        print("ACTION COMPLETED")                         
+            else:
+                print("UNKNOWN COLOR") 
+                tbot.fill_underlighting(BLACK)  
+                tbot.disable_motors()
         else:
-            print("UNKNOWN COLOR") 
+            print("NO BALLS DETECTED")
+            if robot_action!="TRACKING THE BALL" and action_completed==True:
+                action_completed=False # To reset the robot operation
+                print("ROBOT OPERATION RESETED") 
             tbot.fill_underlighting(BLACK)  
             tbot.disable_motors()
-    else:
-        print("NO BALLS DETECTED")
-        if robot_action!="TRACKING THE BALL" and action_completed==True:
-            action_completed=False # To reset the robot operation
-            print("ROBOT OPERATION RESETED") 
-        tbot.fill_underlighting(BLACK)  
-        tbot.disable_motors()
+except KeyboardInterrupt:
+    pass
+finally:
+    # Release the camera and GPIO pins so the next run can claim them
+    tbot.fill_underlighting(BLACK)
+    tbot.disable_motors()
+    camera.stop()

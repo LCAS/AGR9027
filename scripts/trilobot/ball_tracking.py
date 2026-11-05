@@ -65,10 +65,12 @@ def check_color(mask,h,w,x,y,r):
     square region around a detected circle (x, y, r). Returns whether the colour
     was found, plus the image moments of the masked region."""
     
-    search_top = max(int(y - r),0)
-    search_bot = min(int(y + r),h)
-    search_left = max(int(x - r),0)
-    search_right = min(int(x + r),w)
+    # x, y, r are numpy.uint16, so convert to int first to avoid wrap-around when r > x or y
+    x, y, r = int(x), int(y), int(r)
+    search_top = max(y - r,0)
+    search_bot = min(y + r,h)
+    search_left = max(x - r,0)
+    search_right = min(x + r,w)
     mask[0:search_top, 0:w] = 0
     mask[search_bot:h, 0:w] = 0
     mask[0:h, 0:search_left] = 0
@@ -163,20 +165,28 @@ def ball_tracking(x,w):
     else:
         tbot.set_motor_speeds(-vel, vel)
               
-while True or KeyboardInterrupt:
-    image=capture_image()
-    [num_balls,x,y,r]=circle_detection(image)
-    if num_balls>0:
-        [color_detected,ball_index,w]=color_detection(image,color_wanted,x,y,r)
-        if color_detected==True:
-            print("NUMBER OF BALLS:",num_balls,"TRACKING ",color_wanted)
-            ball_tracking(x[ball_index],w) 
-            activate_leds(color_wanted)            
+try:
+    while True:
+        image=capture_image()
+        [num_balls,x,y,r]=circle_detection(image)
+        if num_balls>0:
+            [color_detected,ball_index,w]=color_detection(image,color_wanted,x,y,r)
+            if color_detected==True:
+                print("NUMBER OF BALLS:",num_balls,"TRACKING ",color_wanted)
+                ball_tracking(x[ball_index],w) 
+                activate_leds(color_wanted)            
+            else:
+                print("NUMBER OF BALLS:",num_balls)
+                tbot.fill_underlighting(BLACK)  
+                tbot.disable_motors()
         else:
             print("NUMBER OF BALLS:",num_balls)
             tbot.fill_underlighting(BLACK)  
             tbot.disable_motors()
-    else:
-        print("NUMBER OF BALLS:",num_balls)
-        tbot.fill_underlighting(BLACK)  
-        tbot.disable_motors()
+except KeyboardInterrupt:
+    pass
+finally:
+    # Release the camera and GPIO pins so the next run can claim them
+    tbot.fill_underlighting(BLACK)
+    tbot.disable_motors()
+    camera.stop()

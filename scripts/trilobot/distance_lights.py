@@ -57,12 +57,23 @@ def colour_from_distance(distance):
     return (r, g, b)
 
 
-while not tbot.read_button(BUTTON_A):
+try:
+    while not tbot.read_button(BUTTON_A):
 
-    distance = tbot.read_distance()
-    print("Distance is {:.1f} cm".format(distance))
+        try:
+            distance = tbot.read_distance()
+        except Exception as e:
+            # lgpio can fail with 'bad event request' if the echo pin is still claimed
+            print("Distance read failed:", e)
+            time.sleep(0.1)
+            continue
+        print("Distance is {:.1f} cm".format(distance))
 
-    rgb_colour = colour_from_distance(distance)
-    tbot.fill_underlighting(rgb_colour)
+        rgb_colour = colour_from_distance(distance)
+        tbot.fill_underlighting(rgb_colour)
 
-    time.sleep(0.1)
+        time.sleep(0.1)
+except KeyboardInterrupt:
+    pass
+finally:
+    tbot.fill_underlighting((0, 0, 0))
