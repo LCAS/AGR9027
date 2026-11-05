@@ -16,17 +16,27 @@ DRIVE_SPEED = 0.6      # speed used to drive forward
 TURN_SPEED = 0.6       # speed used to turn away from an obstacle
 TURN_TIME = 0.4        # seconds spent turning before checking the distance again
 
-while not tbot.read_button(BUTTON_A):
+try:
+    while not tbot.read_button(BUTTON_A):
 
-    distance = tbot.read_distance(timeout=50, samples=3)
-    print("Distance is {:.1f} cm".format(distance))
+        try:
+            distance = tbot.read_distance(timeout=50, samples=3)
+        except Exception as e:
+            # lgpio can fail with 'bad event request' if the echo pin is still claimed; stop for safety
+            print("Distance read failed:", e)
+            tbot.disable_motors()
+            time.sleep(0.1)
+            continue
+        print("Distance is {:.1f} cm".format(distance))
 
-    if distance < AVOID_DISTANCE:
-        print("Obstacle detected! Turning...")
-        tbot.turn_right(TURN_SPEED)
-        time.sleep(TURN_TIME)
-    else:
-        tbot.forward(DRIVE_SPEED)
-
-tbot.disable_motors()
+        if distance < AVOID_DISTANCE:
+            print("Obstacle detected! Turning...")
+            tbot.turn_right(TURN_SPEED)
+            time.sleep(TURN_TIME)
+        else:
+            tbot.forward(DRIVE_SPEED)
+except KeyboardInterrupt:
+    pass
+finally:
+    tbot.disable_motors()
 print("Done")

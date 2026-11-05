@@ -16,16 +16,26 @@ SPEED_RANGE = 5.0       # The distance an object is from the goal that will have
 
 tbot = Trilobot()
 
-while not tbot.read_button(BUTTON_A):
-    distance = tbot.read_distance()
+try:
+    while not tbot.read_button(BUTTON_A):
+        try:
+            distance = tbot.read_distance()
+        except Exception as e:
+            # lgpio can fail with 'bad event request' if the echo pin is still claimed
+            print("Distance read failed:", e)
+            distance = -1.0
 
-    if distance >= 0.0:
-        scale = (distance - GOAL_DISTANCE) / SPEED_RANGE
-        speed = max(min(scale, 1.0), -1.0) * TOP_SPEED
-        print("Distance is {:.1f} cm. Speed is {:.2f}".format(distance, speed))
+        if distance >= 0.0:
+            scale = (distance - GOAL_DISTANCE) / SPEED_RANGE
+            speed = max(min(scale, 1.0), -1.0) * TOP_SPEED
+            print("Distance is {:.1f} cm. Speed is {:.2f}".format(distance, speed))
 
-        tbot.set_motor_speeds(speed, speed)
-    else:
-        tbot.disable_motors()
+            tbot.set_motor_speeds(speed, speed)
+        else:
+            tbot.disable_motors()
 
-    time.sleep(0.01)
+        time.sleep(0.01)
+except KeyboardInterrupt:
+    pass
+finally:
+    tbot.disable_motors()

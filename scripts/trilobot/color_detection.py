@@ -24,8 +24,12 @@ def distance_detection():
     # Take 3 measurements rapidly
     for i in range(3):
         clock_check = time.perf_counter()
-        distance = tbot.read_distance(timeout=25, samples=3)
-        #print("Rapid:  Distance is {:.1f} cm (took {:.4f} sec)".format(distance, (time.perf_counter() - clock_check)))
+        try:
+            distance = tbot.read_distance(timeout=25, samples=3)
+        except Exception as e:
+            # lgpio can fail with 'bad event request' if the echo pin is still claimed; skip this reading
+            print("Distance read failed:", e)
+            distance = float("inf")
         time.sleep(0.01)
    
     return distance
@@ -128,12 +132,20 @@ def color_detection(image):
         
     return object_color 
         
-while True or KeyboardInterrupt:
-    distance=distance_detection()
-    if distance<30: #30cm threshold
-        image=capture_image()
-        object_color=color_detection(image)
-        print(object_color)
-    else:
-        print("NO OBJECT DETECTED")
-        tbot.fill_underlighting(BLACK)   
+try:
+    while True:
+        distance=distance_detection()
+        if distance<30: #30cm threshold
+            image=capture_image()
+            object_color=color_detection(image)
+            print(object_color)
+        else:
+            print("NO OBJECT DETECTED")
+            tbot.fill_underlighting(BLACK)
+except KeyboardInterrupt:
+    pass
+finally:
+    # Release the camera and GPIO pins so the next run can claim them
+    tbot.fill_underlighting(BLACK)
+    camera.stop()
+    tbot.disable_motors()

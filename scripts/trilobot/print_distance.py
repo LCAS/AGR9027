@@ -11,18 +11,32 @@ print("Trilobot Example: Print Distance\n")
 
 tbot = Trilobot()
 
-while not tbot.read_button(BUTTON_A):
+try:
+    while not tbot.read_button(BUTTON_A):
 
-    # Take 10 measurements rapidly
-    for i in range(10):
-        clock_check = time.perf_counter()
-        distance = tbot.read_distance(timeout=25, samples=3)
-        print("Rapid:  Distance is {:.1f} cm (took {:.4f} sec)".format(distance, (time.perf_counter() - clock_check)))
-        time.sleep(0.01)
+        # Take 10 measurements rapidly
+        for i in range(10):
+            clock_check = time.perf_counter()
+            try:
+                distance = tbot.read_distance(timeout=25, samples=3)
+            except Exception as e:
+                # lgpio can fail with 'bad event request' if the echo pin is still claimed
+                print("Distance read failed:", e)
+                continue
+            print("Rapid:  Distance is {:.1f} cm (took {:.4f} sec)".format(distance, (time.perf_counter() - clock_check)))
+            time.sleep(0.01)
 
-    # Take 10 measurements allowing longer time for measuring greater distances
-    for i in range(10):
-        clock_check = time.perf_counter()
-        distance = tbot.read_distance(timeout=200, samples=9)
-        print("Slower: Distance is {:.1f} cm (took {:.4f} sec)".format(distance, (time.perf_counter() - clock_check)))
-        time.sleep(0.01)
+        # Take 10 measurements allowing longer time for measuring greater distances
+        for i in range(10):
+            clock_check = time.perf_counter()
+            try:
+                distance = tbot.read_distance(timeout=200, samples=9)
+            except Exception as e:
+                print("Distance read failed:", e)
+                continue
+            print("Slower: Distance is {:.1f} cm (took {:.4f} sec)".format(distance, (time.perf_counter() - clock_check)))
+            time.sleep(0.01)
+except KeyboardInterrupt:
+    pass
+finally:
+    tbot.disable_motors()
