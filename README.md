@@ -19,8 +19,8 @@ AGR9027/
     basic_python_1/         <- Jupyter notebook examples for introductory Python class 1
     basic_python_2/         <- Jupyter notebook examples for introductory Python class 2
     trilobot/               <- Example scripts for the real Trilobot robot (hardware)
-    computer_vision/        <- Computer vision basics (taught session, coming soon)
-    machine_learning/       <- Machine learning basics (taught session, coming soon)
+    computer_vision/        <- Colour classification and tiny CNN notebooks
+    machine_learning/       <- Supervised, unsupervised and reinforcement learning notebooks
   trilobot_simulator/      <- Laptop simulators for Tasks A, B and C (no robot needed)
 ```
 
@@ -41,12 +41,10 @@ AGR9027/
     its own [README](scripts/trilobot/README.md) for a full description of every
     script and how they build on each other from basic to more complex. These are
     building blocks for Assessment 2, **not** finished solutions to Tasks A, B or C.
-  * **[scripts/computer_vision/](scripts/computer_vision)** - *Placeholder, coming
-    soon.* Will contain sample scripts covering computer vision basics, for a
-    dedicated taught session.
-  * **[scripts/machine_learning/](scripts/machine_learning)** - *Placeholder, coming
-    soon.* Will contain sample scripts covering machine learning basics, for a
-    dedicated taught session.
+  * **[scripts/computer_vision/](scripts/computer_vision)** - Optional notebooks
+    introducing colour-based classification and a small CNN.
+  * **[scripts/machine_learning/](scripts/machine_learning)** - Optional notebooks
+    introducing supervised, unsupervised and reinforcement learning.
 
 * **[trilobot_simulator/](trilobot_simulator)** - Simulators for Tasks A, B and C,
   plus a webcam vision harness, to let you develop and test your Assessment 2 logic

@@ -96,61 +96,112 @@ logic. The same student vision functions can also be exercised with the webcam h
 
 ## Setup (do this once)
 
-We recommend installing everything inside a **Python virtual environment** (often
-called a "venv"). This keeps the packages needed for the simulator in a separate,
-self-contained folder instead of mixing them with other Python projects on your
-laptop, which avoids version conflicts and makes it easy to start fresh if something
-goes wrong (just delete the `venv` folder and repeat step 2).
+Use **Python 3.13**, as in the [machine learning setup](../scripts/machine_learning/README.md).
+Internet access is needed to install Python and packages. These instructions use
+a separate simulator **virtual environment** (`trilobot_simulator/venv`), so the
+simulator packages do not interfere with other projects or the notebook `.venv`.
+Install the requirements once per environment, not each time you run a simulator.
 
-1. Install Python 3.10+ from [python.org](https://www.python.org/downloads/) (tick
-   "Add Python to PATH" during installation on Windows) if you don't already have it.
-2. Open a terminal **in the `trilobot_simulator` folder** and create the virtual
-   environment (you only need to do this once):
+Open the repository root in VS Code using **File > Open Folder**, then open
+**Terminal > New Terminal**. The commands below start at the repository root,
+the folder containing `trilobot_simulator`.
+
+1. Check or install Python:
+
+   **Windows (PowerShell):** If Python 3.13 is not installed, download the
+   **Windows installer (64-bit)** for [Python 3.13.9](https://www.python.org/downloads/release/python-3139/).
+   Select **Add python.exe to PATH** and choose **Install Now**, then open a
+   new terminal. Check the version and interpreter location:
+
+   ```powershell
+   python --version
+   (Get-Command python).Source
+   ```
+
+   The version should be `Python 3.13.x`. If the command is missing, shows
+   another version, or points to `anaconda` or `miniconda` and you do not want
+   to use Conda, check the installed Python 3.13 executable by its full path.
+   For a default per-user installation, for example:
+
+   ```powershell
+   & "$env:LocalAppData\Programs\Python\Python313\python.exe" --version
+   ```
+
+   If your installation is elsewhere, use its actual path. Use the same
+   interpreter when creating the environment below. Neither Conda nor the `py`
+   launcher is required.
+
+   **macOS / Linux:** Install Python 3.13, then check `python3 --version`.
+   If it reports a different version, use your Python 3.13 executable's path
+   instead of `python3` below.
+
+2. In the VS Code terminal, move into `trilobot_simulator` and create the
+   environment using the interpreter checked above:
 
    **Windows (PowerShell):**
    ```powershell
    cd trilobot_simulator
    python -m venv venv
+   .\venv\Scripts\python.exe --version
    ```
 
    **macOS / Linux:**
    ```bash
    cd trilobot_simulator
    python3 -m venv venv
+   ./venv/bin/python --version
    ```
 
-   This creates a `trilobot_simulator/venv` folder containing its own copy of Python.
-   It is not part of the module materials, so it's fine (and recommended) to leave it
-   out of any work you submit or commit to git.
+   If you checked an interpreter by full path, substitute it for `python` or
+   `python3` in the `-m venv venv` command (on PowerShell, prefix a quoted
+   path with `&`). The environment's version check must also report Python
+   3.13. If `venv` already exists, do not overwrite an environment you want to
+   keep; choose a different folder and substitute its name in the commands
+   below. Do not commit the environment.
 
-3. Activate the virtual environment (you need to do this every time you open a new
-   terminal to work on the simulator):
+3. Install dependencies into the environment:
 
    **Windows (PowerShell):**
    ```powershell
-   venv\Scripts\Activate.ps1
-   ```
-   > If you get an error about "running scripts is disabled on this system", run
-   > `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first, then try again.
-
-   **Windows (cmd.exe):**
-   ```bat
-   venv\Scripts\activate.bat
+   .\venv\Scripts\python.exe -m pip install --upgrade pip
+   .\venv\Scripts\python.exe -m pip install -r requirements.txt
    ```
 
    **macOS / Linux:**
    ```bash
-   source venv/bin/activate
+   ./venv/bin/python -m pip install --upgrade pip
+   ./venv/bin/python -m pip install -r requirements.txt
    ```
 
-   Your terminal prompt should now start with `(venv)`, confirming the virtual
-   environment is active.
+   These commands use the simulator environment directly, even if the terminal
+   prompt shows `(base)`.
 
-4. With the virtual environment active, install the required packages:
+## Every time you work
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+Open a new terminal at the repository root, run `cd trilobot_simulator`, and
+activate the **existing** environment. Do not repeat environment creation or
+package installation unless you need to recreate or repair it:
+
+**Windows (PowerShell):**
+```powershell
+.\venv\Scripts\Activate.ps1
+```
+> If you get an error about "running scripts is disabled on this system", run
+> `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` first, then try again.
+
+**Windows (cmd.exe):**
+```bat
+venv\Scripts\activate.bat
+```
+
+**macOS / Linux:**
+```bash
+source venv/bin/activate
+```
+
+Your terminal prompt should now start with `(venv)`. You can check the selected
+interpreter with `python --version`; it should report Python 3.13. Terminal
+activation is separate from selecting a notebook kernel in VS Code.
 
 When you're done working, you can leave the virtual environment with the `deactivate`
 command (or just close the terminal).
@@ -158,7 +209,7 @@ command (or just close the terminal).
 ## Running a simulator
 
 Make sure the virtual environment is activated first (prompt starts with `(venv)`;
-if not, repeat step 3 above), then:
+if not, follow [Every time you work](#every-time-you-work)), then:
 
 ```bash
 cd task_a_obstacle_avoidance
